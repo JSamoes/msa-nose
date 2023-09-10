@@ -13,8 +13,10 @@ import edu.baylor.ecs.rad.model.RestEntity;
 import edu.baylor.ecs.rad.model.RestFlow;
 import lombok.AllArgsConstructor;
 import org.apache.tomcat.jni.Time;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,12 +181,8 @@ public class NoseController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(path = "/noAPIGateway", method = RequestMethod.POST, produces = "application/json; charset=UTF-8", consumes = {"text/plain", "application/*"})
-    public boolean getNoAPIGateway(@RequestBody RequestContext request){
-
-        // Get all connections
-        ResponseContext responseContext = restDiscoveryService.generateResponseContext(request);
-
-        return responseContext.getRestEntityContexts().size() >= 50;
+    public boolean getNoAPIGateway(@RequestBody RequestContext request) throws XmlPullParserException, IOException {
+        return libraryService.hasGateway(request);
     }
 
     @CrossOrigin(origins = "*")
