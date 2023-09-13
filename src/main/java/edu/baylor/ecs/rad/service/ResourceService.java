@@ -420,4 +420,35 @@ public class ResourceService {
         return prop;
     }
 
+    public List<String> getAllFiles(String path) {
+        List<String> files = new ArrayList<>();
+        File folder = new File(path);
+        File[] listOfFiles = folder.listFiles();
+        if (listOfFiles != null) {
+            for (File file : listOfFiles) {
+                if(file.isFile() && file.getName().endsWith(".java")) {
+                    files.add(file.getAbsolutePath());
+                } else {
+                    files.addAll(getAllFiles(file.getAbsolutePath()));
+                }
+            }
+        }
+        return files;
+    }
+
+    public int countLines(String file) {
+        int count = 0;
+        try {
+            Scanner scanner = new Scanner(new File(file));
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (!line.trim().isEmpty()) {
+                    count++;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
 }
