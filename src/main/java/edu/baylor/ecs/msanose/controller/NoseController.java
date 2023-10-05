@@ -9,7 +9,6 @@ import edu.baylor.ecs.msanose.service.*;
 import edu.baylor.ecs.rad.context.RequestContext;
 import edu.baylor.ecs.rad.context.ResponseContext;
 import edu.baylor.ecs.rad.context.RestEntityContext;
-import edu.baylor.ecs.rad.context.RestFlowContext;
 import edu.baylor.ecs.rad.model.RestEntity;
 import edu.baylor.ecs.rad.model.RestFlow;
 import lombok.AllArgsConstructor;
@@ -36,6 +35,7 @@ public class NoseController {
     private final EntityService entityService;
     private final WrongCutsService wrongCutsService;
     private final GreedyService greedyService;
+    private final MicroserviceService microserviceService;
 
     @CrossOrigin(origins = "*")
     @RequestMapping(path = "/", method = RequestMethod.POST, produces = "application/json; charset=UTF-8", consumes = {"text/plain", "application/*"})
@@ -241,4 +241,11 @@ public class NoseController {
     public MicroservicesGreedyContext getMicroservicesGreedy(@RequestBody RequestContext request){
         return greedyService.getGreedyMicroservices(request);
     }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(path = "/microserviceSize", method = RequestMethod.POST, produces = "application/json; charset=UTF-8", consumes = {"text/plain", "application/*"})
+    public MicroserviceSizeContext getMicroserviceSize(@RequestBody RequestContext request){
+        return microserviceService.getMicroserviceSize(request);
+    }
+
 }
