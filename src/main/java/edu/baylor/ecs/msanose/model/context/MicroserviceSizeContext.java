@@ -12,6 +12,6 @@ import java.util.List;
 public class MicroserviceSizeContext {
 
     private List<String> megaServices;
-    // private List<String> nanoServices;
+    private List<String> nanoServices;
 
 }

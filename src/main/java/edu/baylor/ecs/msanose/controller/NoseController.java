@@ -114,6 +114,11 @@ public class NoseController {
         now = System.currentTimeMillis();
         times.put("Microservice Greedy", now - curr);
 
+        curr = System.currentTimeMillis();
+        context.setMicroserviceSizeContext(getMicroserviceSize(request));
+        now = System.currentTimeMillis();
+        times.put("Mega and Nano Microservices", now - curr);
+
         context.setTimes(times);
 
         return context;

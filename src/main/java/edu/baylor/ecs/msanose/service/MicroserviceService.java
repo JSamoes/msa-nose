@@ -21,6 +21,7 @@ public class MicroserviceService {
 
     private final ResourceService resourceService;
     private static final Integer MAX_MICROSERVICE_LINE_SIZE = 2000;
+    private static final Integer MIN_MICROSERVICE_LINE_SIZE = 200;
 
     public MicroserviceSizeContext getMicroserviceSize(RequestContext request) {
         String microservicesPath = request.getPathToCompiledMicroservices();
@@ -64,13 +65,17 @@ public class MicroserviceService {
         HashMap<String, Integer> map = countNumberOfLinesInPath(pathCodeMicroservices);
 
         List<String> megaServices = new ArrayList<>();
+        List<String> nanoServices = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             if (entry.getValue() > MAX_MICROSERVICE_LINE_SIZE) {
                 megaServices.add(entry.getKey());
             }
+            if (entry.getValue() < MIN_MICROSERVICE_LINE_SIZE) {
+                nanoServices.add(entry.getKey());
+            }
         }
 
-        return new MicroserviceSizeContext(megaServices);
+        return new MicroserviceSizeContext(megaServices, nanoServices);
     }
 
     private HashMap<String, Integer> countNumberOfLinesInPath(Set<String> pathCodeMicroservices) {
