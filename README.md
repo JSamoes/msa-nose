@@ -1,6 +1,6 @@
 # MSANose
 
-This library is built using Spring Boot to detect 11 code smells in microservice applications.
+This library is built using Spring Boot to detect 14 code smells in microservice applications.
 
 ## Getting Started
 
