@@ -56,7 +56,7 @@ This endpoint will return a list of potential ESB microservices.
 
 ### /api/v1/noAPIGateway 
 
-This endpoint will return true if an API gateway should be used (microservice count > 50).
+This endpoint will return true if an API gateway is used.
 
 ### /api/v1/inappropriateServiceIntimacy 
 
@@ -69,6 +69,18 @@ This endpoint will return the standards used by the application for the presenta
 ### /api/v1/microservicesGreedy 
 
 This endpoint will return a list of greedy microservices.
+
+### /api/v1/timeout
+
+This endpoint will return true if the microservice has timeout defined.
+
+### /api/v1/health-check
+
+This endpoint will return a list of microservices controllers that do not have a health check endpoint.
+
+### /api/v1/microserviceSize
+
+This endpoint will return a list of microservices controllers name that either are too big (mega service) or too short (nano service) based on the total of microservice lines.
 
 ## Using the Endpoints
 
@@ -87,7 +99,9 @@ Each of the endpoints is called using a POST operation with the body as follows:
 ## Authors
 
 * [**Andrew Walker**](https://github.com/walker76)
+* [**João Samões**](https://github.com/JSamoes)
 
 ## Acknowledgments
 
 This material is based upon work supported by the National Science Foundation under Grant No. 1854049 and a grant from [Red Hat Research](https://research.redhat.com).
+The improvements done in this project were made to support a master thesis in the [Instituto Superior de Engenharia do Porto](https://www.ipp.pt/?set_language=en).
