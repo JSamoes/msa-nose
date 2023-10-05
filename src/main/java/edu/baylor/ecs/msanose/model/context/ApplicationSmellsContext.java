@@ -21,5 +21,6 @@ import java.util.Map;
     InappropriateServiceIntimacyContext inappropriateServiceIntimacyContext;
     TooManyStandardsContext tooManyStandardsContext;
     Map<String, Long> times;
+    MicroserviceSizeContext microserviceSizeContext;
     boolean hasTimeout;
 }
