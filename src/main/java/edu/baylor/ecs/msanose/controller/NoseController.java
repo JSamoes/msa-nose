@@ -1,5 +1,6 @@
 package edu.baylor.ecs.msanose.controller;
 
+import edu.baylor.ecs.msanose.model.MicroserviceHealthcheckDTO;
 import edu.baylor.ecs.msanose.model.SharedIntimacy;
 import edu.baylor.ecs.msanose.model.context.*;
 import edu.baylor.ecs.msanose.model.hardcodedEndpoint.HardcodedEndpoint;
@@ -13,10 +14,7 @@ import edu.baylor.ecs.rad.model.RestFlow;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -57,6 +55,11 @@ public class NoseController {
         context.setUnversionedAPIContext(getApis(request));
         now = System.currentTimeMillis();
         times.put("Unversioned API", now - curr);
+
+        curr = System.currentTimeMillis();
+        context.setHealthCheckAPIContext(getHealthCheckEndpoint(request));
+        now = System.currentTimeMillis();
+        times.put("Healthcheck API", now - curr);
 
         curr = System.currentTimeMillis();
         context.setSharedLibraryContext(getSharedLibraries(request));
@@ -120,6 +123,16 @@ public class NoseController {
                 .map(APIContext::getPath)
                 .filter(api -> !apiService.isVersioned(api))
                 .collect(Collectors.toSet()));
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(path = "/health-check", method = RequestMethod.POST, produces = "application/json; charset=UTF-8", consumes = {"text/plain", "application/*"})
+    public HealthCheckAPIContext getHealthCheckEndpoint(@RequestBody RequestContext request){
+        return new HealthCheckAPIContext(apiService.getApisPerMicroservice(request.getPathToCompiledMicroservices()).entrySet().stream()
+                .map(x -> new MicroserviceHealthcheckDTO(x.getKey(), x.getValue().stream().map(APIContext::getPath)
+                        .anyMatch(apiService::hasHealthcheckEndpoint)))
+                .collect(Collectors.toList())
+        );
     }
 
     @CrossOrigin(origins = "*")
