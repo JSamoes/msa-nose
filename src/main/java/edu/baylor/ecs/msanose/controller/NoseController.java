@@ -36,6 +36,7 @@ public class NoseController {
     private final WrongCutsService wrongCutsService;
     private final GreedyService greedyService;
     private final MicroserviceService microserviceService;
+    private final TimeoutService timeoutService;
 
     @CrossOrigin(origins = "*")
     @RequestMapping(path = "/", method = RequestMethod.POST, produces = "application/json; charset=UTF-8", consumes = {"text/plain", "application/*"})
@@ -113,6 +114,11 @@ public class NoseController {
         context.setMicroservicesGreedyContext(getMicroservicesGreedy(request));
         now = System.currentTimeMillis();
         times.put("Microservice Greedy", now - curr);
+
+        curr = System.currentTimeMillis();
+        context.setHasTimeout(hasTimeout(request));
+        now = System.currentTimeMillis();
+        times.put("Timeout", now - curr);
 
         context.setTimes(times);
 
@@ -248,4 +254,10 @@ public class NoseController {
         return microserviceService.getMicroserviceSize(request);
     }
 
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(path = "/timeout", method = RequestMethod.POST, produces = "application/json; charset=UTF-8", consumes = {"text/plain", "application/*"})
+    public boolean hasTimeout(@RequestBody RequestContext request){
+        return timeoutService.hasDefinedTimeout(request);
+    }
 }

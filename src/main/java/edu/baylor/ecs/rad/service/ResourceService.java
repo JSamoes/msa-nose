@@ -71,18 +71,15 @@ public class ResourceService {
             fileNames = stream
                     .sorted()
                     .map(String::valueOf)
-                    .filter((path) -> {
-                        return (String.valueOf(path).toLowerCase().endsWith(".jar") ||
-                                String.valueOf(path).toLowerCase().endsWith(".war")) &&
-                                !String.valueOf(path).toLowerCase().contains("/.mvn/") &&
-                                !String.valueOf(path).toLowerCase().startsWith("/usr/lib/jvm/") &&
-                                !String.valueOf(path).toLowerCase().contains("/target/dependency/") &&
-                                !String.valueOf(path).toLowerCase().contains("/gradle") &&
-                                !String.valueOf(path).toLowerCase().contains("\\.mvn\\") &&
-                                !String.valueOf(path).toLowerCase().contains("\\target\\dependency") &&
-                                !String.valueOf(path).toLowerCase().contains("document") &&
-                                !String.valueOf(path).toLowerCase().contains("\\gradle");
-                    })
+                    .filter((path) -> (String.valueOf(path).toLowerCase().endsWith(".jar") ||
+                            String.valueOf(path).toLowerCase().endsWith(".war")) &&
+                            !String.valueOf(path).toLowerCase().contains("/.mvn/") &&
+                            !String.valueOf(path).toLowerCase().startsWith("/usr/lib/jvm/") &&
+                            !String.valueOf(path).toLowerCase().contains("/target/dependency/") &&
+                            !String.valueOf(path).toLowerCase().contains("/gradle") &&
+                            !String.valueOf(path).toLowerCase().contains("\\.mvn\\") &&
+                            !String.valueOf(path).toLowerCase().contains("\\target\\dependency") &&
+                            !String.valueOf(path).toLowerCase().contains("\\gradle"))
                     .collect(Collectors.toList());
         } catch(Exception e){
             e.printStackTrace();
