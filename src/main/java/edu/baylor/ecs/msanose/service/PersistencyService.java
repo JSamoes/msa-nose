@@ -118,7 +118,7 @@ public class PersistencyService {
         return databases;
     }
 
-    private static void forEachValue(Map<String, Object> source, String base, BiConsumer<? super String, ? super Object> action) {
+    public static void forEachValue(Map<String, Object> source, String base, BiConsumer<? super String, ? super Object> action) {
         for (final Map.Entry<String, Object> entry : source.entrySet()) {
             if (entry.getValue() instanceof Map) {
                 forEachValue((Map<String, Object>) entry.getValue(), base.concat(".").concat(entry.getKey()), action);

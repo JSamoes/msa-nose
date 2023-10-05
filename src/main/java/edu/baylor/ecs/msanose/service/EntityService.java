@@ -4,9 +4,6 @@ import edu.baylor.ecs.jparser.component.Component;
 import edu.baylor.ecs.jparser.component.context.AnalysisContext;
 import edu.baylor.ecs.jparser.component.impl.AnnotationComponent;
 import edu.baylor.ecs.jparser.component.impl.ClassComponent;
-import edu.baylor.ecs.jparser.component.impl.MethodInfoComponent;
-import edu.baylor.ecs.jparser.model.AnnotationValuePair;
-import edu.baylor.ecs.msanose.model.context.APIContext;
 import edu.baylor.ecs.rad.context.RequestContext;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,7 +45,8 @@ public class EntityService {
         String basePath = request.getPathToCompiledMicroservices();
 
         // convert windows path to linux style
-        basePath = basePath.replace("\\\\", "/");
+        basePath = basePath.replaceAll("\\\\", "/");
+        path = path.replaceAll("\\\\", "/");
 
         if(!basePath.endsWith("/")){
             basePath = basePath.concat("/");

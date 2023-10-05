@@ -9,6 +9,7 @@ import java.util.Map;
 @NoArgsConstructor @AllArgsConstructor
 @Data public class ApplicationSmellsContext {
     UnversionedAPIContext unversionedAPIContext;
+    HealthCheckAPIContext healthCheckAPIContext;
     HardCodedEndpointsContext hardCodedEndpointsContext;
     ESBContext esbContext;
     boolean APIGateway;
@@ -21,4 +22,5 @@ import java.util.Map;
     TooManyStandardsContext tooManyStandardsContext;
     Map<String, Long> times;
     MicroserviceSizeContext microserviceSizeContext;
+    boolean hasTimeout;
 }

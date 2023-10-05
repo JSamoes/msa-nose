@@ -1,5 +1,6 @@
 package edu.baylor.ecs.msanose.controller;
 
+import edu.baylor.ecs.msanose.model.MicroserviceHealthcheckDTO;
 import edu.baylor.ecs.msanose.model.SharedIntimacy;
 import edu.baylor.ecs.msanose.model.context.*;
 import edu.baylor.ecs.msanose.model.hardcodedEndpoint.HardcodedEndpoint;
@@ -11,12 +12,12 @@ import edu.baylor.ecs.rad.context.RestEntityContext;
 import edu.baylor.ecs.rad.model.RestEntity;
 import edu.baylor.ecs.rad.model.RestFlow;
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.jni.Time;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,6 +36,7 @@ public class NoseController {
     private final WrongCutsService wrongCutsService;
     private final GreedyService greedyService;
     private final MicroserviceService microserviceService;
+    private final TimeoutService timeoutService;
 
     @CrossOrigin(origins = "*")
     @RequestMapping(path = "/", method = RequestMethod.POST, produces = "application/json; charset=UTF-8", consumes = {"text/plain", "application/*"})
@@ -57,6 +59,11 @@ public class NoseController {
         context.setUnversionedAPIContext(getApis(request));
         now = System.currentTimeMillis();
         times.put("Unversioned API", now - curr);
+
+        curr = System.currentTimeMillis();
+        context.setHealthCheckAPIContext(getHealthCheckEndpoint(request));
+        now = System.currentTimeMillis();
+        times.put("Healthcheck API", now - curr);
 
         curr = System.currentTimeMillis();
         context.setSharedLibraryContext(getSharedLibraries(request));
@@ -109,6 +116,11 @@ public class NoseController {
         times.put("Microservice Greedy", now - curr);
 
         curr = System.currentTimeMillis();
+        context.setHasTimeout(hasTimeout(request));
+        now = System.currentTimeMillis();
+        times.put("Timeout", now - curr);
+
+        curr = System.currentTimeMillis();
         context.setMicroserviceSizeContext(getMicroserviceSize(request));
         now = System.currentTimeMillis();
         times.put("Mega and Nano Microservices", now - curr);
@@ -125,6 +137,16 @@ public class NoseController {
                 .map(APIContext::getPath)
                 .filter(api -> !apiService.isVersioned(api))
                 .collect(Collectors.toSet()));
+    }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(path = "/health-check", method = RequestMethod.POST, produces = "application/json; charset=UTF-8", consumes = {"text/plain", "application/*"})
+    public HealthCheckAPIContext getHealthCheckEndpoint(@RequestBody RequestContext request){
+        return new HealthCheckAPIContext(apiService.getApisPerMicroservice(request.getPathToCompiledMicroservices()).entrySet().stream()
+                .map(x -> new MicroserviceHealthcheckDTO(x.getKey(), x.getValue().stream().map(APIContext::getPath)
+                        .anyMatch(apiService::hasHealthcheckEndpoint)))
+                .collect(Collectors.toList())
+        );
     }
 
     @CrossOrigin(origins = "*")
@@ -183,12 +205,8 @@ public class NoseController {
 
     @CrossOrigin(origins = "*")
     @RequestMapping(path = "/noAPIGateway", method = RequestMethod.POST, produces = "application/json; charset=UTF-8", consumes = {"text/plain", "application/*"})
-    public boolean getNoAPIGateway(@RequestBody RequestContext request){
-
-        // Get all connections
-        ResponseContext responseContext = restDiscoveryService.generateResponseContext(request);
-
-        return responseContext.getRestEntityContexts().size() >= 50;
+    public boolean getNoAPIGateway(@RequestBody RequestContext request) throws XmlPullParserException, IOException {
+        return libraryService.hasGateway(request);
     }
 
     @CrossOrigin(origins = "*")
@@ -241,4 +259,10 @@ public class NoseController {
         return microserviceService.getMicroserviceSize(request);
     }
 
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(path = "/timeout", method = RequestMethod.POST, produces = "application/json; charset=UTF-8", consumes = {"text/plain", "application/*"})
+    public boolean hasTimeout(@RequestBody RequestContext request){
+        return timeoutService.hasDefinedTimeout(request);
+    }
 }

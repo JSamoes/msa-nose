@@ -71,18 +71,15 @@ public class ResourceService {
             fileNames = stream
                     .sorted()
                     .map(String::valueOf)
-                    .filter((path) -> {
-                        return (String.valueOf(path).toLowerCase().endsWith(".jar") ||
-                                String.valueOf(path).toLowerCase().endsWith(".war")) &&
-                                !String.valueOf(path).toLowerCase().contains("/.mvn/") &&
-                                !String.valueOf(path).toLowerCase().startsWith("/usr/lib/jvm/") &&
-                                !String.valueOf(path).toLowerCase().contains("/target/dependency/") &&
-                                !String.valueOf(path).toLowerCase().contains("/gradle") &&
-                                !String.valueOf(path).toLowerCase().contains("\\.mvn\\") &&
-                                !String.valueOf(path).toLowerCase().contains("\\target\\dependency") &&
-                                !String.valueOf(path).toLowerCase().contains("document") &&
-                                !String.valueOf(path).toLowerCase().contains("\\gradle");
-                    })
+                    .filter((path) -> (String.valueOf(path).toLowerCase().endsWith(".jar") ||
+                            String.valueOf(path).toLowerCase().endsWith(".war")) &&
+                            !String.valueOf(path).toLowerCase().contains("/.mvn/") &&
+                            !String.valueOf(path).toLowerCase().startsWith("/usr/lib/jvm/") &&
+                            !String.valueOf(path).toLowerCase().contains("/target/dependency/") &&
+                            !String.valueOf(path).toLowerCase().contains("/gradle") &&
+                            !String.valueOf(path).toLowerCase().contains("\\.mvn\\") &&
+                            !String.valueOf(path).toLowerCase().contains("\\target\\dependency") &&
+                            !String.valueOf(path).toLowerCase().contains("\\gradle"))
                     .collect(Collectors.toList());
         } catch(Exception e){
             e.printStackTrace();
@@ -247,6 +244,60 @@ public class ResourceService {
         }
         //return ct classes
         return ctClasses;
+    }
+
+    public List<String> getAllYamlFilesInPath(String path){
+        File directory = new File(path);
+        List<String> result = new ArrayList<>();
+        File[] fList = directory.listFiles();
+        if(fList != null) {
+            for (File file : fList) {
+                if (file.isFile()) {
+                    if (file.getName().endsWith(".yml")) {
+                        result.add(file.getAbsolutePath());
+                    }
+                } else if (file.isDirectory()) {
+                    result.addAll(getAllYamlFilesInPath(file.getAbsolutePath()));
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<String> getAllJsonFilesInPath(String path){
+        File directory = new File(path);
+        List<String> result = new ArrayList<>();
+        File[] fList = directory.listFiles();
+        if(fList != null) {
+            for (File file : fList) {
+                if (file.isFile()) {
+                    if (file.getName().endsWith(".json")) {
+                        result.add(file.getAbsolutePath());
+                    }
+                } else if (file.isDirectory()) {
+                    result.addAll(getAllJsonFilesInPath(file.getAbsolutePath()));
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<String> getAllExtensionFilesInPath(String extension, String path){
+        File directory = new File(path);
+        List<String> result = new ArrayList<>();
+        File[] fList = directory.listFiles();
+        if(fList != null) {
+            for (File file : fList) {
+                if (file.isFile()) {
+                    if (file.getName().endsWith(extension)) {
+                        result.add(file.getAbsolutePath());
+                    }
+                } else if (file.isDirectory()) {
+                    result.addAll(getAllExtensionFilesInPath(extension, file.getAbsolutePath()));
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -450,5 +501,19 @@ public class ResourceService {
             e.printStackTrace();
         }
         return count;
+    }
+    public List<String> readAllLines(String file) {
+        List<String> lines = new ArrayList<>();
+
+        File f = new File(file);
+        try (Scanner sc = new Scanner(f)) {
+            while (sc.hasNextLine()) {
+                lines.add(sc.nextLine());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return lines;
     }
 }
