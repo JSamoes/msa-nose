@@ -246,6 +246,60 @@ public class ResourceService {
         return ctClasses;
     }
 
+    public List<String> getAllYamlFilesInPath(String path){
+        File directory = new File(path);
+        List<String> result = new ArrayList<>();
+        File[] fList = directory.listFiles();
+        if(fList != null) {
+            for (File file : fList) {
+                if (file.isFile()) {
+                    if (file.getName().endsWith(".yml")) {
+                        result.add(file.getAbsolutePath());
+                    }
+                } else if (file.isDirectory()) {
+                    result.addAll(getAllYamlFilesInPath(file.getAbsolutePath()));
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<String> getAllJsonFilesInPath(String path){
+        File directory = new File(path);
+        List<String> result = new ArrayList<>();
+        File[] fList = directory.listFiles();
+        if(fList != null) {
+            for (File file : fList) {
+                if (file.isFile()) {
+                    if (file.getName().endsWith(".json")) {
+                        result.add(file.getAbsolutePath());
+                    }
+                } else if (file.isDirectory()) {
+                    result.addAll(getAllJsonFilesInPath(file.getAbsolutePath()));
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<String> getAllExtensionFilesInPath(String extension, String path){
+        File directory = new File(path);
+        List<String> result = new ArrayList<>();
+        File[] fList = directory.listFiles();
+        if(fList != null) {
+            for (File file : fList) {
+                if (file.isFile()) {
+                    if (file.getName().endsWith(extension)) {
+                        result.add(file.getAbsolutePath());
+                    }
+                } else if (file.isDirectory()) {
+                    result.addAll(getAllExtensionFilesInPath(extension, file.getAbsolutePath()));
+                }
+            }
+        }
+        return result;
+    }
+
     /**
      * This method returns a {@link Resource} from a file path loaded by the injected
      * {@link ResourceLoader}. This is a private helper method used by
@@ -417,4 +471,49 @@ public class ResourceService {
         return prop;
     }
 
+    public List<String> getAllFiles(String path) {
+        List<String> files = new ArrayList<>();
+        File folder = new File(path);
+        File[] listOfFiles = folder.listFiles();
+        if (listOfFiles != null) {
+            for (File file : listOfFiles) {
+                if(file.isFile() && file.getName().endsWith(".java")) {
+                    files.add(file.getAbsolutePath());
+                } else {
+                    files.addAll(getAllFiles(file.getAbsolutePath()));
+                }
+            }
+        }
+        return files;
+    }
+
+    public int countLines(String file) {
+        int count = 0;
+        try {
+            Scanner scanner = new Scanner(new File(file));
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (!line.trim().isEmpty()) {
+                    count++;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+    public List<String> readAllLines(String file) {
+        List<String> lines = new ArrayList<>();
+
+        File f = new File(file);
+        try (Scanner sc = new Scanner(f)) {
+            while (sc.hasNextLine()) {
+                lines.add(sc.nextLine());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return lines;
+    }
 }
